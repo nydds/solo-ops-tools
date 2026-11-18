@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LLC Cost Compare 2026 — Wyoming vs Delaware vs Florida vs New York | Solo Ops Tools</title>
+<meta name="description" content="Compare 2026 LLC formation and annual costs in Wyoming, Delaware, Florida, and New York: filing fees, annual reports, franchise taxes, and NY publication costs. Free, no signup.">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="index.html">Solo Ops <span>Tools</span></a>
+    <nav class="site-nav" aria-label="Main navigation">
+      <a href="1099-tax-estimator.html">1099 Tax Estimator</a>
+      <a href="llc-cost-compare.html" aria-current="page">LLC Cost Compare</a>
+      <a href="about.html">About</a>
+      <a href="privacy.html">Privacy</a>
+      <a href="affiliate-disclosure.html">Affiliate Disclosure</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <div class="wrap">
+    <span class="badge">State fees · 2026</span>
+    <h1>LLC Cost Compare</h1>
+    <p class="lede">Formation and annual costs for a US LLC in Wyoming, Delaware, Florida, and New York — from each state's official fee schedule. Adjust the horizon and the New York assumptions to see the true multi-year cost.</p>
+
+    <form id="llc-form" class="calc-form" novalidate>
+      <label for="llc-years">Comparison horizon</label>
+      <select id="llc-years">
+        <option value="1">1 year</option>
+        <option value="3">3 years</option>
+        <option value="5" selected>5 years</option>
+        <option value="10">10 years</option>
+      </select>
+
+      <label for="ny-tier">New York publication — county cost tier</label>
+      <select id="ny-tier">
+        <option value="upstate">Low-cost upstate county (~$200)</option>
+        <option value="typical" selected>Typical county (~$500)</option>
+        <option value="outer">NYC outer boroughs (~$1,000)</option>
+        <option value="manhattan">Manhattan (~$1,500)</option>
+      </select>
+      <p class="hint">New York requires publication in two county-designated newspapers for six weeks. Newspaper rates are set by the newspapers, not the state, so these are estimates by county tier — get a written quote before you commit.</p>
+
+      <label for="ny-gross">New York-source gross income (for the annual IT-204-LL fee)</label>
+      <input type="number" id="ny-gross" min="0" step="1000" inputmode="decimal" placeholder="e.g. 80000" value="80000">
+      <p class="hint">The annual Form IT-204-LL fee is $25 up to $100,000 of NY-source gross income, then $50 / $175 / $500 / $1,500 / $3,000 / $4,500 in higher tiers. First-year LLCs pay a flat $25.</p>
+
+      <label for="wy-assets">Assets located in Wyoming (for the annual report fee)</label>
+      <input type="number" id="wy-assets" min="0" step="1000" inputmode="decimal" placeholder="0" value="0">
+      <p class="hint">Wyoming's annual report fee is $60 minimum, or $0.0002 per $1 of assets located in Wyoming, whichever is greater. Leave at 0 for the $60 minimum.</p>
+
+      <p><button class="btn" type="submit">Compare costs</button></p>
+    </form>
+
+    <section id="llc-results" class="results" aria-live="polite">
+      <h2>Cost comparison — <span id="llc-years-label">5</span> years</h2>
+      <table>
+        <thead>
+          <tr><th>State</th><th class="num">Formation filing</th><th class="num">Year 1 total</th><th class="num">Annual recurring</th><th class="num"><span id="llc-years-label2">5</span>-year total</th><th>Relative</th></tr>
+        </thead>
+        <tbody id="llc-rows"></tbody>
+      </table>
+      <p class="fine">★ lowest marks the cheapest total over the selected horizon. Year 1 includes the formation filing plus first-year recurring fees. New York publication assumption: <span id="llc-ny-tier-label">—</span>. Registered-agent fees are not included — they are third-party services, not state fees.</p>
+    </section>
+
+    <h2>State fee details (2026)</h2>
+    <table>
+      <thead><tr><th>State</th><th class="num">Formation filing</th><th class="num">Annual / recurring</th><th>Notes</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Wyoming</strong></td><td class="num">$100</td><td class="num">$60/yr min.</td><td>No franchise tax. No state individual income tax. Annual report: $60 minimum or $0.0002 per $1 of in-state assets.</td></tr>
+        <tr><td><strong>Delaware</strong></td><td class="num">$90</td><td class="num">$300/yr</td><td>Flat $300 annual franchise tax for LLCs. Court of Chancery; the default for venture-backed companies.</td></tr>
+        <tr><td><strong>Florida</strong></td><td class="num">$125</td><td class="num">$138.75/yr</td><td>Annual report due January 1 – May 1. No state individual income tax.</td></tr>
+        <tr><td><strong>New York</strong></td><td class="num">$200</td><td class="num">$9 / 2 yrs + IT-204-LL</td><td>Biennial Statement $9 every 2 years; Certificate of Publication $50; mandatory newspaper publication (LLC Law § 206); annual Form IT-204-LL fee $25–$4,500 on NY-source gross income.</td></tr>
+      </tbody>
+    </table>
+
+    <h2>What the numbers don't show</h2>
+    <div class="grid two">
+      <div class="card">
+        <h3>Form where you operate</h3>
+        <p>The cheapest filing fee is rarely the cheapest total. If you form in Wyoming or Delaware but operate in your home state, you usually must also register there as a foreign LLC — and pay that state's fees too. For most solo founders, forming in the state where you actually work is the simpler and often cheaper path.</p>
+      </div>
+      <div class="card">
+        <h3>New York publication is the swing factor</h3>
+        <p>New York's $200 filing fee looks moderate, but the mandatory six-week newspaper publication can cost $200 in a low-cost upstate county or $1,000–$1,900+ in Manhattan — set by the newspapers, not the state. Choose the county tier above to see how much it moves the total.</p>
+      </div>
+    </div>
+
+    <div class="disclaimer">
+      <strong>Estimate only — not legal or tax advice.</strong> State fees are from each Secretary of State's published fee schedule, checked 2026-11-18. Fees change; verify on the official state site before filing. Publication costs are estimates, not quotes. For entity-choice advice, consult a licensed attorney or tax professional.
+    </div>
+  </div>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <nav aria-label="Footer navigation">
+      <a href="index.html">Home</a>
+      <a href="1099-tax-estimator.html">1099 Tax Estimator</a>
+      <a href="llc-cost-compare.html">LLC Cost Compare</a>
+      <a href="about.html">About</a>
+      <a href="privacy.html">Privacy</a>
+      <a href="affiliate-disclosure.html">Affiliate Disclosure</a>
+    </nav>
+    <p>© 2026 Solo Ops Tools. All figures are 2026 estimates for planning only. This site is not tax or legal advice.</p>
+  </div>
+</footer>
+<script src="assets/llc-compare.js"></script>
+</body>
+</html>

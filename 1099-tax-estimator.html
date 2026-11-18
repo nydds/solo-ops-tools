@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>1099 Tax Estimator 2026 — Self-Employment &amp; Federal Income Tax | Solo Ops Tools</title>
+<meta name="description" content="Estimate 2026 self-employment tax (15.3% SE tax, $184,500 Social Security wage base) and federal income tax for 1099 freelancers, plus quarterly estimated payments (Form 1040-ES). Free, no signup.">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="index.html">Solo Ops <span>Tools</span></a>
+    <nav class="site-nav" aria-label="Main navigation">
+      <a href="1099-tax-estimator.html" aria-current="page">1099 Tax Estimator</a>
+      <a href="llc-cost-compare.html">LLC Cost Compare</a>
+      <a href="about.html">About</a>
+      <a href="privacy.html">Privacy</a>
+      <a href="affiliate-disclosure.html">Affiliate Disclosure</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <div class="wrap">
+    <span class="badge">Tax year 2026</span>
+    <h1>1099 Tax Estimator</h1>
+    <p class="lede">For US freelancers and single-member LLCs. Enter your net self-employment profit and get an estimate of self-employment tax, federal income tax, and your four quarterly estimated payments.</p>
+
+    <form id="tax-form" class="calc-form" novalidate>
+      <label for="net-profit">Net self-employment profit (annual, after business expenses)</label>
+      <input type="number" id="net-profit" min="0" step="100" inputmode="decimal" placeholder="e.g. 85000" required>
+      <p class="hint">Your 1099 income minus deductible business expenses. If you have not subtracted expenses yet, do that first — the estimator works on net profit.</p>
+
+      <fieldset>
+        <legend>Filing status</legend>
+        <div class="radio-row">
+          <label><input type="radio" name="filing-status" value="single" checked> Single</label>
+          <label><input type="radio" name="filing-status" value="mfj"> Married filing jointly</label>
+        </div>
+        <p class="hint">Standard deduction 2026: Single $16,100 · Married filing jointly $32,200 (IRS Rev. Proc. 2025-32).</p>
+      </fieldset>
+
+      <label for="w2-wages">W-2 wages already subject to Social Security tax (optional)</label>
+      <input type="number" id="w2-wages" min="0" step="100" inputmode="decimal" placeholder="0" value="0">
+      <p class="hint">If you also have a W-2 job, those wages use up part of the $184,500 Social Security wage base. Leave at 0 if you have no W-2 income.</p>
+
+      <p><button class="btn" type="submit">Calculate my 2026 estimate</button></p>
+      <p id="tax-error" class="fine" role="alert" style="color:#b91c1c;"></p>
+    </form>
+
+    <section id="tax-results" class="results" aria-live="polite">
+      <h2>Your 2026 estimate</h2>
+      <div class="result-grid">
+        <div class="stat"><div class="k">Total estimated tax</div><div class="v" id="r-total">—</div></div>
+        <div class="stat"><div class="k">Effective rate</div><div class="v" id="r-effective">—</div></div>
+        <div class="stat"><div class="k">Quarterly payment</div><div class="v" id="r-quarterly">—</div></div>
+      </div>
+      <table>
+        <thead><tr><th>Item</th><th class="num">Amount</th></tr></thead>
+        <tbody>
+          <tr><td>Self-employment tax (15.3% on 92.35% of net profit)</td><td class="num" id="r-se">—</td></tr>
+          <tr><td>&nbsp;&nbsp;of which: Social Security 12.4% (up to the $184,500 wage base)</td><td class="num" id="r-ss">—</td></tr>
+          <tr><td>&nbsp;&nbsp;of which: Medicare 2.9% (no cap)</td><td class="num" id="r-med">—</td></tr>
+          <tr><td>&nbsp;&nbsp;of which: Additional Medicare 0.9% (over $200,000 single / $250,000 joint)</td><td class="num" id="r-addl">—</td></tr>
+          <tr><td>One-half of SE tax (deductible from income)</td><td class="num" id="r-half">—</td></tr>
+          <tr><td>Federal taxable income (after ½ SE tax + standard deduction)</td><td class="num" id="r-taxable">—</td></tr>
+          <tr><td>Federal income tax (2026 marginal brackets)</td><td class="num" id="r-fed">—</td></tr>
+        </tbody>
+      </table>
+
+      <h3>Quarterly estimated payments (Form 1040-ES)</h3>
+      <table>
+        <thead><tr><th>Payment</th><th>Due date</th><th class="num">Amount</th></tr></thead>
+        <tbody id="r-schedule"></tbody>
+      </table>
+      <p class="fine">You may skip the January 15, 2027 payment if you file your 2026 return and pay the full balance by February 1, 2027. Due dates per IRS Form 1040-ES (2026).</p>
+    </section>
+
+    <h2>How the estimate is calculated</h2>
+    <div class="card">
+      <ol>
+        <li><strong>Self-employment tax:</strong> 92.35% of net profit is taxable. Social Security 12.4% applies up to the 2026 wage base of $184,500; Medicare 2.9% has no cap. The 0.9% Additional Medicare Tax applies above $200,000 (single) / $250,000 (joint). Total SE rate: 15.3%.</li>
+        <li><strong>Deduction:</strong> one-half of the SE tax is deductible from income, then the 2026 standard deduction ($16,100 single / $32,200 joint) is subtracted.</li>
+        <li><strong>Federal income tax:</strong> the 2026 marginal brackets (10%–37%) apply to the remaining taxable income. Rates are marginal — only the income inside each bracket is taxed at that rate.</li>
+        <li><strong>Quarterly payments:</strong> the total is split into four equal estimated payments.</li>
+      </ol>
+      <p class="fine">Not included: state income tax, the Qualified Business Income (QBI) deduction (which can lower federal tax further for eligible filers), credits, and the 3.8% net investment income tax. Those vary by situation — see a tax professional for them.</p>
+    </div>
+
+    <h2>2026 federal income tax brackets</h2>
+    <table>
+      <thead><tr><th>Rate</th><th class="num">Single (taxable income)</th><th class="num">Married filing jointly</th></tr></thead>
+      <tbody>
+        <tr><td>10%</td><td class="num">$0 – $12,400</td><td class="num">$0 – $24,800</td></tr>
+        <tr><td>12%</td><td class="num">$12,400 – $50,400</td><td class="num">$24,800 – $100,800</td></tr>
+        <tr><td>22%</td><td class="num">$50,400 – $105,700</td><td class="num">$100,800 – $211,400</td></tr>
+        <tr><td>24%</td><td class="num">$105,700 – $201,775</td><td class="num">$211,400 – $403,550</td></tr>
+        <tr><td>32%</td><td class="num">$201,775 – $256,225</td><td class="num">$403,550 – $512,450</td></tr>
+        <tr><td>35%</td><td class="num">$256,225 – $640,600</td><td class="num">$512,450 – $768,700</td></tr>
+        <tr><td>37%</td><td class="num">Over $640,600</td><td class="num">Over $768,700</td></tr>
+      </tbody>
+    </table>
+    <p class="fine">Source: IRS Revenue Procedure 2025-32. Brackets apply to taxable income (after deductions), not gross income.</p>
+
+    <h2>Tools that help with the paperwork</h2>
+    <p>These are the accounting and payroll tools most commonly used by freelancers at this stage. Links go to each vendor's official site.</p>
+    <div class="grid two">
+      <!-- Comparison cards. data-affiliate-slot marks partner outlink slots.
+           No affiliate ID is attached yet; insert the partner ID at deploy time. -->
+      <article class="card affiliate-slot" data-affiliate-slot="tax-quickbooks">
+        <span class="slot-label">Accounting</span>
+        <h3>QuickBooks</h3>
+        <p>Full accounting, invoicing, expense tracking, and tax-ready reports. The most widely used option, and the one most accountants already work with.</p>
+        <p><a class="btn secondary" href="https://quickbooks.intuit.com/" target="_blank" rel="sponsored noopener">Visit QuickBooks</a></p>
+      </article>
+      <article class="card affiliate-slot" data-affiliate-slot="tax-wave">
+        <span class="slot-label">Accounting · Free plan</span>
+        <h3>Wave</h3>
+        <p>Free accounting and invoicing for very small businesses — a practical starting point if you are keeping costs at zero while you grow.</p>
+        <p><a class="btn secondary" href="https://www.waveapps.com/" target="_blank" rel="sponsored noopener">Visit Wave</a></p>
+      </article>
+      <article class="card affiliate-slot" data-affiliate-slot="tax-gusto">
+        <span class="slot-label">Payroll &amp; HR</span>
+        <h3>Gusto</h3>
+        <p>Payroll, benefits, and contractor payments. Useful when your solo business starts paying others.</p>
+        <p><a class="btn secondary" href="https://gusto.com/" target="_blank" rel="sponsored noopener">Visit Gusto</a></p>
+      </article>
+      <article class="card affiliate-slot" data-affiliate-slot="tax-freshbooks">
+        <span class="slot-label">Invoicing</span>
+        <h3>FreshBooks</h3>
+        <p>Invoicing-first accounting with time tracking — built for service businesses that bill by the hour or by the project.</p>
+        <p><a class="btn secondary" href="https://www.freshbooks.com/" target="_blank" rel="sponsored noopener">Visit FreshBooks</a></p>
+      </article>
+    </div>
+    <p class="fine">Some links on this page are affiliate links — see our <a href="affiliate-disclosure.html">affiliate disclosure</a>. We list features only; verify current pricing on the vendor's site.</p>
+
+    <div class="disclaimer">
+      <strong>Estimate only — not tax advice.</strong> This calculator uses 2026 IRS and SSA figures for planning purposes. It does not replace a tax professional, and it does not account for state tax, credits, or the QBI deduction. Verify current figures on IRS.gov before filing.
+    </div>
+  </div>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <nav aria-label="Footer navigation">
+      <a href="index.html">Home</a>
+      <a href="1099-tax-estimator.html">1099 Tax Estimator</a>
+      <a href="llc-cost-compare.html">LLC Cost Compare</a>
+      <a href="about.html">About</a>
+      <a href="privacy.html">Privacy</a>
+      <a href="affiliate-disclosure.html">Affiliate Disclosure</a>
+    </nav>
+    <p>© 2026 Solo Ops Tools. All figures are 2026 estimates for planning only. This site is not tax or legal advice.</p>
+  </div>
+</footer>
+<script src="assets/tax-estimator.js"></script>
+</body>
+</html>
