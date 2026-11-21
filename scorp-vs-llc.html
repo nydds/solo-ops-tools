@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>S-Corp vs Sole Prop / LLC Calculator 2026 — Self-Employment Tax Savings | Solo Ops Tools</title>
+<meta name="description" content="2026 S-corp vs sole proprietor or single-member LLC: self-employment tax saved on distributions minus payroll and CPA costs, break-even profit, and state S-corp minimum taxes. Free, no signup.">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="index.html">Solo Ops <span>Tools</span></a>
+    <nav class="site-nav" aria-label="Main navigation">
+      <a href="1099-tax-estimator.html">1099 Tax Estimator</a>
+      <a href="scorp-vs-llc.html" aria-current="page">S-Corp vs LLC</a>
+      <a href="quarterly-tax-calculator.html">Quarterly Tax</a>
+      <a href="llc-cost-compare.html">LLC Cost Compare</a>
+      <a href="about.html">About</a>
+      <a href="privacy.html">Privacy</a>
+      <a href="affiliate-disclosure.html">Affiliate Disclosure</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <div class="wrap">
+    <span class="badge">Tax year 2026</span>
+    <h1>S-Corp vs Sole Prop / LLC Calculator</h1>
+    <p class="lede">An S-corp election does not remove the 15.3% tax — it removes it from the part of your profit you take as a distribution instead of wages. Enter your profit, a salary you could defend, and what the election would cost you to run, and see whether it pays for itself in 2026.</p>
+
+    <form id="scorp-form" class="calc-form" novalidate>
+      <label for="scorp-profit">Expected net profit (annual, before any salary)</label>
+      <input type="number" id="scorp-profit" min="0" step="1000" inputmode="decimal" placeholder="e.g. 100000" value="100000" required>
+      <p class="hint">What Schedule C would show: business income minus deductible expenses. Under an S-corp this is the money left to split into salary, costs, and distributions.</p>
+
+      <label for="scorp-salary">Reasonable salary you would pay yourself (W-2)</label>
+      <input type="number" id="scorp-salary" min="0" step="1000" inputmode="decimal" placeholder="e.g. 60000" value="60000" required>
+      <p class="hint">The IRS requires reasonable compensation for the work you do before any distribution. This calculator does not tell you what is reasonable — it shows what the tax effect of the figure you enter is.</p>
+
+      <fieldset>
+        <legend>Filing status</legend>
+        <div class="radio-row">
+          <label><input type="radio" name="scorp-status" value="single" checked> Single</label>
+          <label><input type="radio" name="scorp-status" value="mfj"> Married filing jointly</label>
+        </div>
+        <p class="hint">Sets the 2026 brackets, the $16,100 / $32,200 standard deduction, and the §199A threshold.</p>
+      </fieldset>
+
+      <label for="scorp-state">State</label>
+      <select id="scorp-state">
+        <option value="none" selected>Other state / federal only</option>
+        <option value="CA">California — 1.5% S-corp tax above the $800 minimum</option>
+        <option value="NY">New York — Form CT-3-S fixed dollar minimum</option>
+        <option value="NJ">New Jersey — CBT minimum tax</option>
+        <option value="FL">Florida — no state income tax</option>
+      </select>
+      <p class="hint">Only S-corp-specific state costs are added. State income tax on the salary and the distribution is not modeled for any state.</p>
+
+      <label for="scorp-costs">Added annual cost of being an S corp (payroll service + 1120-S + extra bookkeeping)</label>
+      <input type="number" id="scorp-costs" min="0" step="100" inputmode="decimal" placeholder="e.g. 2000" value="2000">
+      <p class="hint">What you would pay each year that you do not pay today: payroll processing, a separate Form 1120-S and K-1, and bookkeeping that keeps wages and distributions apart. Solo owners commonly report $1,500–$3,000 all in; add state unemployment insurance and anything else your state charges.</p>
+
+      <p><button class="btn" type="submit">Compare the two</button></p>
+      <p id="scorp-error" class="fine" role="alert" style="color:#b91c1c;"></p>
+    </form>
+
+    <section id="scorp-results" class="results" aria-live="polite">
+      <h2>Your 2026 comparison</h2>
+      <div class="result-grid">
+        <div class="stat"><div class="k">Net annual saving from the election</div><div class="v" id="r-savings">—</div></div>
+        <div class="stat"><div class="k">Break-even net profit at this salary</div><div class="v" id="r-breakeven">—</div></div>
+      </div>
+      <p id="r-verdict"></p>
+      <p class="fine" id="scorp-split">S-corp salary <strong id="r-salary">—</strong> · distribution left on the K-1 <strong id="r-distribution">—</strong></p>
+
+      <table>
+        <thead><tr><th>2026</th><th class="num">Sole prop / single-member LLC</th><th class="num">S corporation</th></tr></thead>
+        <tbody id="scorp-rows"></tbody>
+      </table>
+      <p class="fine">Sole prop column: self-employment tax on 92.35% of profit, plus federal income tax after half the SE tax, the standard deduction and the §199A deduction. S-corp column: 15.3% payroll tax on the salary only, the employer half and the running costs deducted from company profit, income tax on salary plus the remaining profit.</p>
+
+      <h3>Break-even by profit level</h3>
+      <p>Your own profit is in the ladder. The break-even figure moves with the salary you could justify and what the election costs you to run.</p>
+      <table>
+        <thead><tr><th>Net profit</th><th class="num">Salary used</th><th class="num">Sole prop / LLC cost</th><th class="num">S-corp cost</th><th class="num">Net saving</th><th>Better</th></tr></thead>
+        <tbody id="scorp-scenarios"></tbody>
+      </table>
+
+      <div class="note" id="scorp-warning" style="display:none;"></div>
+      <div class="note" id="scorp-state-note"></div>
+    </section>
+
+    <h2>What the two columns really are</h2>
+    <div class="grid two">
+      <div class="card">
+        <h3>An S corp is a tax election, not an entity</h3>
+        <p>You do not form an S corporation at a state office. You form an LLC (or a corporation) and file <strong>Form 2553</strong> with the IRS to be taxed under subchapter S. The company then files Form 1120-S each year and issues you a Schedule K-1 instead of the Schedule C you file now.</p>
+        <p>As a default sole proprietor or single-member LLC, all of your net profit is self-employment income: <strong>15.3%</strong> on 92.35% of it — Social Security 12.4% up to the 2026 wage base of $184,500, Medicare 2.9% with no cap.</p>
+      </div>
+      <div class="card">
+        <h3>What the election changes</h3>
+        <p>Under an S corp, your salary is a W-2 wage carrying the same 15.3% (half withheld from you, half paid by the company, both ultimately out of your business). The profit left after salary and costs is a <strong>distribution</strong>, and distributions carry no Social Security or Medicare tax at all.</p>
+        <p>That is the entire saving: 15.3% on the difference between profit and salary. Everything else about the election — extra filings, payroll, the reasonable-compensation requirement, state minimum taxes — is a cost against it.</p>
+      </div>
+    </div>
+
+    <h2>How the estimate is calculated</h2>
+    <div class="card">
+      <ol>
+        <li><strong>Sole prop / LLC.</strong> SE tax = 15.3% of 92.35% of profit (Social Security stops at $184,500; the 0.9% Additional Medicare Tax starts at $200,000 single / $250,000 joint). Half of the SE tax is deductible, then the 2026 standard deduction, then the §199A deduction of 20% of qualified business income (profit minus half the SE tax). Federal income tax comes from the 2026 brackets.</li>
+        <li><strong>S corporation.</strong> Salary is capped at your profit. Payroll tax is 12.4% of salary up to the wage base plus 2.9% of salary. The company deducts the employer half of that, $42 of FUTA, your added costs, and any state S-corp tax. What is left is the K-1 distribution.</li>
+        <li><strong>Income tax on the S-corp side</strong> is computed on salary plus distribution. Wages are not qualified business income (the IRS says reasonable compensation from an S corp is not QBI), so the §199A deduction applies only to the distribution — which is why the income tax usually rises and eats part of the payroll-tax saving.</li>
+        <li><strong>Net saving</strong> = sole prop total cost minus S-corp total cost, where each total includes payroll or SE tax, federal income tax, and the cash costs of the election.</li>
+        <li><strong>Break-even profit</strong> scans net profit upward in $250 steps with your salary and your costs held fixed, and reports the first profit where the S corp is ahead.</li>
+      </ol>
+      <p class="fine">The 1099 Tax Estimator on this site leaves the §199A deduction out, so its total can read higher than the sole-prop column here for the same profit.</p>
+    </div>
+
+    <h2>Why the break-even is higher than the number you have read</h2>
+    <div class="card">
+      <p>The rule of thumb "an S corp pays off around $70,000–$90,000 of profit" comes from comparing payroll tax alone: 15.3% of profit versus 15.3% of salary, minus a $1,500–$2,500 bill. That comparison overstates the saving, because the election also costs you the deduction for half of SE tax and part of the §199A deduction — and part of the employer payroll tax is only deductible, not free.</p>
+      <p>Modeled in full, a $50,000 salary with $2,000 of running costs breaks even near $74,000 of profit; a $60,000 salary near $93,000; an $80,000 salary near $122,000. A higher, more defensible salary pushes break-even up — the same $60,000 salary with $4,000 of costs needs about $106,000. Above break-even the saving grows steadily: every $10,000 of profit more than your salary takes about $1,410 of self-employment tax off the table, of which roughly $1,250 survives the change in income tax.</p>
+      <p>Two things move it the other way. In a state like California that taxes the S corp at 1.5% of net income, and in any year you also have W-2 wages that already used up the Social Security wage base, the election is worth less.</p>
+    </div>
+
+    <h2>What this leaves out</h2>
+    <div class="grid two">
+      <div class="card">
+        <h3>In the model's blind spot</h3>
+        <ul>
+          <li>State income tax on wages and distributions — the split mostly does not change it, but entity-level state taxes and city taxes do, and only a few are here.</li>
+          <li>The §199A wage limitation and the SSTB phase-out above the 2026 threshold ($201,750 single / $403,500 joint). The page warns you when you are in that range.</li>
+          <li>Health insurance, retirement contributions, an accountable plan, and QBI from other businesses.</li>
+          <li>The cost of the election itself: Form 2553, a new EIN, state registrations, and the first year of payroll setup.</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>What a CPA will also weigh</h3>
+        <ul>
+          <li>Whether your salary would survive an IRS reasonable-compensation challenge — the most common way an S corp saving turns into a bill.</li>
+          <li>Payroll deadlines, quarterly filings, and the fact that you cannot simply skip paying yourself in a bad month.</li>
+          <li>Whether you can reverse the election later: revocation needs IRS consent within five years in most cases.</li>
+          <li>Your total household picture, including a spouse's W-2 wages and the Additional Medicare Tax.</li>
+        </ul>
+      </div>
+    </div>
+
+    <h2>State S-corp costs used here</h2>
+    <table>
+      <thead><tr><th>State</th><th>What the S corp owes that the LLC does not</th></tr></thead>
+      <tbody>
+        <tr><td><strong>California</strong></td><td>1.5% of California net income, with an $800 minimum franchise tax. A California LLC already pays the $800, so only the excess is counted here.</td></tr>
+        <tr><td><strong>New York</strong></td><td>Form CT-3-S fixed dollar minimum: $25 up to $100,000 of New York receipts, then $50 / $175 / $300 / $1,000 / $3,000 / $4,500 in higher bands. The MTA surcharge does not apply to a New York S corporation. New York City's General Corporation Tax is not modeled.</td></tr>
+        <tr><td><strong>New Jersey</strong></td><td>Corporation Business Tax statutory minimum by New Jersey gross receipts: $375 under $100,000, then $562 / $750 / $1,125 / $1,500.</td></tr>
+        <tr><td><strong>Florida</strong></td><td>Nothing in the normal case: no personal income tax, and the 5.5% corporate income tax reaches an S corp only if it pays federal income tax on Form 1120S line 23c.</td></tr>
+      </tbody>
+    </table>
+    <p class="fine">States that charge by receipts are modeled with your net profit standing in for receipts, which understates the fee when your gross receipts are much larger. Verify the current fee with your state before electing.</p>
+
+    <h2>Questions this calculator gets</h2>
+    <div class="card">
+      <h3>Is an S corp cheaper than an LLC?</h3>
+      <p>It depends on the gap between your profit and your salary. The LLC has no payroll or 1120-S cost; the S corp saves 15.3% on everything above the salary. Below roughly $70,000–$100,000 of profit, depending on salary and costs, the election usually costs more than it saves. For formation and annual filing costs by state, see the <a href="llc-cost-compare.html">LLC Cost Compare</a>.</p>
+      <h3>How low can my salary be?</h3>
+      <p>There is no safe percentage in the law. It has to be what the business would pay someone else for the same work, considering your role, hours and experience. A salary that is 20% of profit is the pattern the IRS most often reclassifies — the page warns below 40%.</p>
+      <h3>Does the calculator include state income tax?</h3>
+      <p>No. Only federal tax plus the state S-corp-specific costs listed above. Add your state's income tax separately if you want a total picture; the salary/distribution split usually does not change state individual income tax much.</p>
+      <h3>When should I make the election?</h3>
+      <p>Form 2553 is generally due by March 15 of the year you want it to take effect (two months and 15 days into the tax year), or within 2 months and 15 days of forming the entity. Relief for a late election is available but not guaranteed — plan it with a CPA before the deadline passes.</p>
+    </div>
+
+    <h2>Tools that help with the paperwork</h2>
+    <p>An S corp means running payroll every month and filing a separate return. These are the tools most solo owners use for that. Links go to each vendor's official site.</p>
+    <div class="grid two">
+      <!-- Affiliate slot. data-affiliate-slot marks a partner outlink slot; no
+           affiliate ID is attached yet. Insert the partner ID at deploy time. -->
+      <article class="card affiliate-slot" data-affiliate-slot="scorp-gusto">
+        <span class="slot-label">Payroll</span>
+        <h3>Gusto</h3>
+        <p>Runs payroll for a single shareholder-employee, files the quarterly payroll returns, and produces the W-2 and 1120-S figures your CPA needs.</p>
+        <p><a class="btn secondary" href="https://gusto.com/" target="_blank" rel="sponsored noopener">Visit Gusto</a></p>
+      </article>
+      <!-- Affiliate slot. See comment above. -->
+      <article class="card affiliate-slot" data-affiliate-slot="scorp-quickbooks">
+        <span class="slot-label">Accounting</span>
+        <h3>QuickBooks</h3>
+        <p>Keeps owner wages and shareholder distributions in separate accounts — the bookkeeping split an S corp return depends on.</p>
+        <p><a class="btn secondary" href="https://quickbooks.intuit.com/" target="_blank" rel="sponsored noopener">Visit QuickBooks</a></p>
+      </article>
+    </div>
+    <p class="fine">Some links on this page are affiliate links — see our <a href="affiliate-disclosure.html">affiliate disclosure</a>. No vendor prices are quoted here; verify current pricing on the vendor's site.</p>
+
+    <h2>Related calculators</h2>
+    <p><a href="1099-tax-estimator.html">1099 Tax Estimator</a> — your federal tax as a sole proprietor, without the election. <a href="quarterly-tax-calculator.html">Quarterly Tax Calculator</a> — what to send the IRS each quarter under either structure. <a href="llc-cost-compare.html">LLC Cost Compare</a> — what the entity itself costs to form and keep in four states.</p>
+
+    <div class="disclaimer">
+      <strong>Educational estimate, not CPA advice.</strong> This is a planning comparison built on 2026 federal figures (IRS Rev. Proc. 2025-32, SSA wage base $184,500) and the state minimum taxes listed above, checked on 2026-11-20. It does not model state income tax, credits, the §199A wage limitation, or your whole return. An S-corp election changes your filing obligations for years, and revoking it is not free — take these numbers to a licensed tax professional before you file Form 2553.
+    </div>
+  </div>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <nav aria-label="Footer navigation">
+      <a href="index.html">Home</a>
+      <a href="1099-tax-estimator.html">1099 Tax Estimator</a>
+      <a href="scorp-vs-llc.html">S-Corp vs LLC</a>
+      <a href="quarterly-tax-calculator.html">Quarterly Tax</a>
+      <a href="llc-cost-compare.html">LLC Cost Compare</a>
+      <a href="about.html">About</a>
+      <a href="privacy.html">Privacy</a>
+      <a href="affiliate-disclosure.html">Affiliate Disclosure</a>
+    </nav>
+    <p>© 2026 Solo Ops Tools. All figures are 2026 estimates for planning only. This site is not tax or legal advice.</p>
+  </div>
+</footer>
+<script src="assets/scorp-compare.js"></script>
+</body>
+</html>

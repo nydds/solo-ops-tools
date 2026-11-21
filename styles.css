@@ -89,6 +89,8 @@ legend { font-weight: 700; padding: 0 0.4rem; }
 .stat { background: #f1f5f9; border-radius: 8px; padding: 0.75rem 0.9rem; }
 .stat .k { font-size: 0.82rem; color: var(--muted); }
 .stat .v { font-size: 1.2rem; font-weight: 700; color: var(--navy); }
+.stat .v.pos { color: var(--teal-dark); }
+.stat .v.neg { color: #b91c1c; }
 table { width: 100%; border-collapse: collapse; margin: 0.75rem 0 1rem; font-size: 0.95rem; }
 th, td { text-align: left; padding: 0.55rem 0.6rem; border-bottom: 1px solid var(--line); vertical-align: top; }
 th { background: #f1f5f9; color: var(--navy); }

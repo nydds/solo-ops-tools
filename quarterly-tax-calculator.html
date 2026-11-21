@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Quarterly Estimated Tax Calculator 2026 — Form 1040-ES Safe Harbor | Solo Ops Tools</title>
+<meta name="description" content="Work out your 2026 quarterly estimated payments: the amount due on April 15, June 15, September 15 and January 15, your safe harbor minimum (100% or 110% of 2025 tax), and how to avoid the underpayment penalty. Free, no signup.">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="index.html">Solo Ops <span>Tools</span></a>
+    <nav class="site-nav" aria-label="Main navigation">
+      <a href="1099-tax-estimator.html">1099 Tax Estimator</a>
+      <a href="scorp-vs-llc.html">S-Corp vs LLC</a>
+      <a href="quarterly-tax-calculator.html" aria-current="page">Quarterly Tax</a>
+      <a href="llc-cost-compare.html">LLC Cost Compare</a>
+      <a href="about.html">About</a>
+      <a href="privacy.html">Privacy</a>
+      <a href="affiliate-disclosure.html">Affiliate Disclosure</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <div class="wrap">
+    <span class="badge">Tax year 2026</span>
+    <h1>2026 Quarterly Estimated Tax Calculator</h1>
+    <p class="lede">Nobody withholds tax for you when you are self-employed, so the IRS expects four payments — April 15, June 15, September 15, and January 15 — each at least the size the safe harbor rules require. Enter your expected profit and your 2025 tax, and get the amount for each due date plus the floor that keeps the penalty away.</p>
+
+    <form id="q-form" class="calc-form" novalidate>
+      <label for="q-profit">Expected 2026 net profit (annual, after business expenses)</label>
+      <input type="number" id="q-profit" min="0" step="1000" inputmode="decimal" placeholder="e.g. 120000" value="120000" required>
+      <p class="hint">Net self-employment profit, or your share of an S-corp or partnership K-1. The calculator covers self-employment tax and federal income tax on that profit.</p>
+
+      <fieldset>
+        <legend>Filing status</legend>
+        <div class="radio-row">
+          <label><input type="radio" name="q-status" value="single" checked> Single</label>
+          <label><input type="radio" name="q-status" value="mfj"> Married filing jointly</label>
+        </div>
+        <p class="hint">2026 standard deduction: Single $16,100 · Married filing jointly $32,200 (IRS Rev. Proc. 2025-32).</p>
+      </fieldset>
+
+      <label for="q-prior">Your 2025 total tax (Form 1040, line 24)</label>
+      <input type="number" id="q-prior" min="0" step="100" inputmode="decimal" placeholder="e.g. 12000" value="12000">
+      <p class="hint">The total tax on your 2025 return, before withholding and estimated payments are subtracted — Form 1040 line 24. Leave it at 0 if 2025 was your first year with no return.</p>
+
+      <fieldset>
+        <legend>Safe harbor — 2025 adjusted gross income</legend>
+        <div class="radio-row">
+          <label><input type="radio" name="q-harbor" value="100" checked> $150,000 or less (pay 100% of 2025 tax)</label>
+          <label><input type="radio" name="q-harbor" value="110"> Over $150,000 (pay 110% of 2025 tax)</label>
+        </div>
+        <p class="hint">Paying last year's tax in full — or 110% of it if your 2025 AGI was over $150,000 ($75,000 married filing separately) — protects you from the penalty whatever this year turns out to be.</p>
+      </fieldset>
+
+      <label for="q-withholding">Federal income tax withheld in 2026 (all year, from any W-2 or other job)</label>
+      <input type="number" id="q-withholding" min="0" step="100" inputmode="decimal" placeholder="0" value="0">
+      <p class="hint">Withholding counts as paid evenly through the year, so it comes off the total before the four payments are split. Include a spouse's withholding only if you file jointly.</p>
+
+      <p><button class="btn" type="submit">Plan my 2026 payments</button></p>
+      <p id="q-error" class="fine" role="alert" style="color:#b91c1c;"></p>
+    </form>
+
+    <section id="q-results" class="results" aria-live="polite">
+      <h2>Your 2026 payment plan</h2>
+      <div class="result-grid">
+        <div class="stat"><div class="k">Projected 2026 federal tax</div><div class="v" id="r-projected">—</div></div>
+        <div class="stat"><div class="k">Pay each quarter (minimum)</div><div class="v" id="r-quarterly">—</div></div>
+        <div class="stat"><div class="k">Required annual payment</div><div class="v" id="r-required">—</div></div>
+      </div>
+      <p class="fine">Safe harbor figure: <span id="r-safeharbor">—</span></p>
+
+      <h3>Where the numbers come from</h3>
+      <table>
+        <thead><tr><th>Item</th><th class="num">Amount</th></tr></thead>
+        <tbody>
+          <tr><td>Self-employment tax (15.3% of 92.35% of profit)</td><td class="num" id="r-se">—</td></tr>
+          <tr><td>Federal income tax (2026 brackets, after §199A)</td><td class="num" id="r-fed">—</td></tr>
+          <tr><td>&nbsp;&nbsp;§199A (QBI) deduction applied</td><td class="num" id="r-qbi">—</td></tr>
+          <tr><td>Less: federal withholding you expect in 2026</td><td class="num" id="r-wh">—</td></tr>
+          <tr><td>Still to cover with estimated payments</td><td class="num" id="r-remaining">—</td></tr>
+          <tr><td>&nbsp;&nbsp;Per quarter, minimum to avoid the penalty</td><td class="num" id="r-perq-min">—</td></tr>
+          <tr><td>&nbsp;&nbsp;Per quarter, to cover the whole projected bill</td><td class="num" id="r-perq-full">—</td></tr>
+          <tr><td>Balance that would still be due with the return (April 15, 2027)</td><td class="num" id="r-balance">—</td></tr>
+        </tbody>
+      </table>
+
+      <h3>Payment schedule (Form 1040-ES)</h3>
+      <table>
+        <thead><tr><th>Payment</th><th>Due date</th><th class="num">Minimum each</th><th class="num">Minimum cumulative</th><th class="num">Full coverage each</th></tr></thead>
+        <tbody id="q-rows"></tbody>
+      </table>
+      <p class="fine">You may skip the January 15, 2027 payment if you file your 2026 return and pay everything owed by February 1, 2027. Due dates from IRS Form 1040-ES for 2026.</p>
+
+      <div class="note" id="q-notes" style="display:none;"></div>
+    </section>
+
+    <h2>The two rules that decide whether you owe a penalty</h2>
+    <div class="grid two">
+      <div class="card">
+        <h3>Rule 1 — 90% of this year</h3>
+        <p>Pay at least <strong>90% of your 2026 tax</strong> through withholding and estimated payments, spread across the four due dates as income arrives. If your profit comes in higher than you projected, the 90% test is measured against the real figure at filing, not your estimate.</p>
+      </div>
+      <div class="card">
+        <h3>Rule 2 — the safe harbor</h3>
+        <p>Pay <strong>100% of your 2025 total tax</strong> — or <strong>110%</strong> if your 2025 AGI was over $150,000 — and you are protected no matter how much this year earns. It is the reason a big year does not have to mean a big penalty; it is also the reason a bad year still asks you to pay last year's amount.</p>
+      </div>
+    </div>
+    <p>The penalty is the smaller of the two requirements: you need 90% of this year's tax <em>or</em> the safe harbor amount, whichever is lower. Underpaying is charged interest-like at the federal short-term rate plus three points, not as a lump fine, so it grows the longer a quarter stays short.</p>
+
+    <h2>Penalty-avoidance checklist</h2>
+    <div class="card">
+      <ol>
+        <li><strong>Pay on the date, not in the month.</strong> Late by one day means that installment is short. Pay through <a href="https://www.irs.gov/payments/direct-pay" target="_blank" rel="noopener">IRS Direct Pay</a> or EFTPS — free, and dated the day you schedule it, not the day it clears.</li>
+        <li><strong>Check the safe harbor first.</strong> If paying 100% (or 110%) of your 2025 tax is less than 90% of your projected 2026 tax, that is all you need to avoid the penalty, and the rest can wait until April 2027.</li>
+        <li><strong>Use withholding late in the year if you fall behind.</strong> Withholding is treated as paid evenly through all four quarters, so raising your W-4 withholding in November can still fix an underpaid April — an estimated payment in November cannot.</li>
+        <li><strong>Uneven income? Say so on Form 2210.</strong> If most of your income arrived in one quarter, the annualized income installment method (Schedule AI) recalculates each installment against the income actually earned by then, and can erase a penalty that the flat method would charge.</li>
+        <li><strong>Stay under $1,000 due.</strong> If the tax still owed after withholding is under $1,000, the underpayment penalty does not apply.</li>
+        <li><strong>Label every payment.</strong> Form 1040-ES with your name, SSN, and "2026" — a payment credited to the wrong year is, for penalty purposes, not made.</li>
+        <li><strong>Check your state separately.</strong> Most states with an income tax run their own quarterly schedule and their own safe harbor; paying the IRS on time says nothing about them.</li>
+        <li><strong>Overpaid in April?</strong> You can elect on the return to apply the overpayment to 2027's first installment instead of taking a refund — useful if your income keeps climbing.</li>
+      </ol>
+    </div>
+
+    <h2>How the estimate is calculated</h2>
+    <div class="card">
+      <ol>
+        <li><strong>Projected 2026 tax</strong> = self-employment tax (15.3% of 92.35% of profit, Social Security capped at the $184,500 wage base, plus the 0.9% Additional Medicare Tax above $200,000 single / $250,000 joint) + federal income tax on profit after half the SE tax, the 2026 standard deduction, and the §199A deduction of 20% of qualified business income.</li>
+        <li><strong>Required annual payment</strong> = the lower of 90% of the projection and the safe harbor (100% or 110% of your 2025 total tax).</li>
+        <li><strong>Each payment</strong> = (required annual payment − expected withholding) ÷ 4. Withholding is deemed paid evenly across the year, which is why it is subtracted before the split.</li>
+        <li><strong>Full coverage each</strong> = (projected tax − withholding) ÷ 4 — what you would pay to owe nothing in April instead of just avoiding the penalty.</li>
+      </ol>
+      <p class="fine">Federal only. State estimates, the net investment income tax, capital gains at their own rates, and the §199A wage limitation are not modeled. The 1099 Tax Estimator on this site leaves §199A out, so its total can read higher than the projection here.</p>
+    </div>
+
+    <h2>When the four dates are not enough</h2>
+    <div class="card">
+      <p>Four equal payments are the simple path, not the required one. A freelancer whose income lands in two big projects can pay 30% in September and almost nothing in April, and the annualized income installment method on Form 2210 will treat that as timely — but only if the income really arrived that way, and only if you file Schedule AI with the return.</p>
+      <p>The other common shape is a year that starts slow and ends strong. Under the flat method you are expected to have paid a quarter of the year's tax by April 15 even if you had earned nothing by then. That is when people switch to withholding, or to the annualized method, and stop paying a penalty on money they had not yet made.</p>
+      <p>If your profit passes the Social Security wage base, the fourth quarter is usually the cheapest one: the 12.4% Social Security portion is already fully paid and only the 2.9% Medicare portion plus income tax continues.</p>
+    </div>
+
+    <h2>Questions this calculator gets</h2>
+    <div class="card">
+      <h3>Do I have to make estimated payments at all?</h3>
+      <p>Only if you expect to owe $1,000 or more after withholding. Below that, the penalty does not apply — but the tax is still due by April 15, 2027, and paying late in one lump means no penalty, not no tax.</p>
+      <h3>What counts as my 2025 total tax for the safe harbor?</h3>
+      <p>Form 1040, line 24 of your 2025 return: income tax plus self-employment tax, before subtracting withholding and estimated payments. Do not use your balance due — that is the number after withholding, and using it understates the safe harbor by a lot.</p>
+      <h3>My income jumped this year. Should I pay 110%?</h3>
+      <p>If you can cover it, the 110% safe harbor is the cheapest way to be certain no penalty applies, because it is fixed by last year's return. What it does not do is cover this year's actual bill — the difference is still due in April 2027, which is what the "full coverage each" column shows.</p>
+      <h3>Does an S-corp change the schedule?</h3>
+      <p>The dates do not change, but the amount does: payroll tax comes out of your paychecks each month instead of being estimated, and you estimate only on the salary plus distributions. See the <a href="scorp-vs-llc.html">S-Corp vs LLC calculator</a> for what the election does to the total.</p>
+    </div>
+
+    <h2>Tools that keep the quarters straight</h2>
+    <div class="grid two">
+      <!-- Affiliate slot. data-affiliate-slot marks a partner outlink slot; no
+           affiliate ID is attached yet. Insert the partner ID at deploy time. -->
+      <article class="card affiliate-slot" data-affiliate-slot="quarterly-quickbooks">
+        <span class="slot-label">Accounting</span>
+        <h3>QuickBooks</h3>
+        <p>Keeps profit, expenses and set-aside cash in one place, so each quarter's estimated payment is based on real numbers instead of a guess.</p>
+        <p><a class="btn secondary" href="https://quickbooks.intuit.com/" target="_blank" rel="sponsored noopener">Visit QuickBooks</a></p>
+      </article>
+      <!-- Affiliate slot. See comment above. -->
+      <article class="card affiliate-slot" data-affiliate-slot="quarterly-wave">
+        <span class="slot-label">Accounting · Free plan</span>
+        <h3>Wave</h3>
+        <p>Free invoicing and bookkeeping for a one-person business — enough to see the profit figure this calculator starts from.</p>
+        <p><a class="btn secondary" href="https://www.waveapps.com/" target="_blank" rel="sponsored noopener">Visit Wave</a></p>
+      </article>
+    </div>
+    <p class="fine">Some links on this page are affiliate links — see our <a href="affiliate-disclosure.html">affiliate disclosure</a>. No vendor prices are quoted here; verify current pricing on the vendor's site.</p>
+
+    <h2>Related calculators</h2>
+    <p><a href="1099-tax-estimator.html">1099 Tax Estimator</a> — the full federal tax picture behind these payments. <a href="scorp-vs-llc.html">S-Corp vs LLC</a> — whether an S-corp election lowers what you owe. <a href="llc-cost-compare.html">LLC Cost Compare</a> — formation and annual costs in four states.</p>
+
+    <div class="disclaimer">
+      <strong>Educational estimate, not tax advice.</strong> Built on 2026 figures checked on 2026-11-20: IRS Rev. Proc. 2025-32 for brackets, deductions and §199A thresholds, the SSA wage base of $184,500, and IRS Form 1040-ES for dates and payment rules. The penalty is actually computed installment by installment on Form 2210, which this does not reproduce. Confirm your numbers with a licensed tax professional before paying.
+    </div>
+  </div>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <nav aria-label="Footer navigation">
+      <a href="index.html">Home</a>
+      <a href="1099-tax-estimator.html">1099 Tax Estimator</a>
+      <a href="scorp-vs-llc.html">S-Corp vs LLC</a>
+      <a href="quarterly-tax-calculator.html">Quarterly Tax</a>
+      <a href="llc-cost-compare.html">LLC Cost Compare</a>
+      <a href="about.html">About</a>
+      <a href="privacy.html">Privacy</a>
+      <a href="affiliate-disclosure.html">Affiliate Disclosure</a>
+    </nav>
+    <p>© 2026 Solo Ops Tools. All figures are 2026 estimates for planning only. This site is not tax or legal advice.</p>
+  </div>
+</footer>
+<script src="assets/quarterly-tax.js"></script>
+</body>
+</html>
