@@ -195,7 +195,9 @@ if (typeof document !== 'undefined') {
 
       var notes = [];
       if (plan.remainingToPay === 0) {
-        notes.push('Your withholding already covers the required annual payment, so no estimated payments are needed to avoid the penalty. You may still want to pay toward the projected bill: ' + fmtUSD(plan.balanceDueAtFiling) + ' would otherwise be due with your return.');
+        notes.push(plan.balanceDueAtFiling > 0
+          ? 'Your withholding already covers the required annual payment, so no estimated payments are needed to avoid the penalty. It does not cover the whole projected bill: ' + fmtUSD(plan.balanceDueAtFiling) + ' would otherwise be due with your return.'
+          : 'Your withholding already covers the whole projected bill, so no estimated payments are needed this year.');
       }
       if (plan.deMinimis) {
         notes.push('Your remaining balance after withholding is under $1,000, so the underpayment penalty generally does not apply — but the balance is still due by April 15, 2027.');

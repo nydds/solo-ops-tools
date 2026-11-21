@@ -92,6 +92,10 @@ legend { font-weight: 700; padding: 0 0.4rem; }
 .stat .v.pos { color: var(--teal-dark); }
 .stat .v.neg { color: #b91c1c; }
 table { width: 100%; border-collapse: collapse; margin: 0.75rem 0 1rem; font-size: 0.95rem; }
+/* Wide result tables scroll inside their own box on a phone instead of
+   stretching the page sideways. */
+.table-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; max-width: 100%; }
+.table-scroll table { margin-bottom: 0.5rem; }
 th, td { text-align: left; padding: 0.55rem 0.6rem; border-bottom: 1px solid var(--line); vertical-align: top; }
 th { background: #f1f5f9; color: var(--navy); }
 td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
