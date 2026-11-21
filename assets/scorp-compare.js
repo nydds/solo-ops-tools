@@ -228,6 +228,12 @@ function fmtSigned(n) {
   return (v > 0 ? '+' : v < 0 ? '-' : '') + '$' + Math.abs(v).toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
 }
 
+/* Null-safe DOM writes: a missing element must never stop the calculation. */
+function setText(id, text) {
+  var el = document.getElementById(id);
+  if (el) el.textContent = text;
+}
+
 /* Browser wiring — runs only when a DOM is present. */
 if (typeof document !== 'undefined') {
   document.addEventListener('DOMContentLoaded', function () {
@@ -259,27 +265,21 @@ if (typeof document !== 'undefined') {
       var c = compareSCorp(profit, salary, status, costs, state);
       var be = breakEvenProfit(salary, status, costs, state);
 
-      document.getElementById('r-savings').textContent = fmtSigned(c.annualSavings);
-      document.getElementById('r-savings').className = 'v ' + (c.sCorpWins ? 'pos' : 'neg');
-      document.getElementById('r-verdict').textContent = c.sCorpWins
+      var savingsEl = document.getElementById('r-savings');
+      if (savingsEl) {
+        savingsEl.textContent = fmtSigned(c.annualSavings);
+        savingsEl.className = 'v ' + (c.sCorpWins ? 'pos' : 'neg');
+      }
+      setText('r-verdict', c.sCorpWins
         ? 'The S-corp election saves money at these numbers.'
-        : 'The S-corp election costs more at these numbers.';
-      document.getElementById('r-se-sp').textContent = fmtUSD(c.soleProp.seTax);
-      document.getElementById('r-se-sc').textContent = fmtUSD(c.sCorp.payrollTax);
-      document.getElementById('r-fed-sp').textContent = fmtUSD(c.soleProp.federalTax);
-      document.getElementById('r-fed-sc').textContent = fmtUSD(c.sCorp.federalTax);
-      document.getElementById('r-costs-sc').textContent = fmtUSD(c.sCorp.extraCosts + c.sCorp.stateCost + c.sCorp.futa);
-      document.getElementById('r-total-sp').textContent = fmtUSD(c.soleProp.totalBurden);
-      document.getElementById('r-total-sc').textContent = fmtUSD(c.sCorp.totalBurden);
-      document.getElementById('r-takehome-sp').textContent = fmtUSD(c.soleProp.takeHome);
-      document.getElementById('r-takehome-sc').textContent = fmtUSD(c.sCorp.takeHome);
-      document.getElementById('r-salary').textContent = fmtUSD(c.sCorp.salary);
-      document.getElementById('r-distribution').textContent = fmtUSD(Math.max(0, c.sCorp.distribution));
-      document.getElementById('r-breakeven').textContent = be
+        : 'The S-corp election costs more at these numbers.');
+      setText('r-salary', fmtUSD(c.sCorp.salary));
+      setText('r-distribution', fmtUSD(Math.max(0, c.sCorp.distribution)));
+      setText('r-breakeven', be
         ? (be.atScanFloor
             ? 'At any profit level in this range ($' + be.profit.toLocaleString('en-US') + '+ with this salary)'
             : 'About ' + fmtUSD(be.profit) + ' of net profit')
-        : 'Over $500,000 with this salary — or never';
+        : 'Over $500,000 with this salary — or never');
 
       var warn = [];
       if (salary > 0 && salary < profit * 0.4) {
